@@ -1,2 +1,2 @@
 # ExampleCode
-Code showcase
+A handful of code snippets for combined showcase.
