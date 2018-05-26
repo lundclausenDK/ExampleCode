@@ -1,12 +1,26 @@
-package generator;
+package implementations;
 
-public class Generator {
+import interfaces.GeneratorInterface;
+import interfaces.NumberRemoverInterface;
+import interfaces.ValidatorInterface;
+import java.util.Random;
+
+public class Generator implements GeneratorInterface {
     
+    private ValidatorInterface validator;
+    private NumberRemoverInterface numberRemover;
+
     private int[][] grid = new int[9][9];
     private int[] coreNumbers = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     private int[] temp = new int[9];
     
-    public int[][] generateSolution() {
+    public Generator(ValidatorInterface validator, NumberRemoverInterface numberRemover) {
+        this.validator = validator;
+        this.numberRemover = numberRemover;
+    }
+    
+    @Override
+    public int[][] generateSolution(int numbersTobeRemoved) {
         
         // Fill array from 1 to 9 that comply with sudoku rules in rows, columns and subgrid
         for (int i = 0; i < grid.length; i++) {
@@ -45,14 +59,43 @@ public class Generator {
             }   
         }
         
-        // Swop number pairs in each row
+        // Swop random number pairs in each row
+        Random r = new Random();
         
+        int p1_x = r.nextInt((3 - 1) + 1) + 1;
+        int p1_y = r.nextInt((6 - 4) + 1) + 4;
         
+        int p2_x = p1_y;
+        int p2_y = r.nextInt((9 - 7) + 1) + 7;
         
-        return this.grid;
+        while (p2_x == p1_y) {
+            p2_x = r.nextInt((6 - 4) + 1) + 4;
+        }
+        
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid.length; j++) {
+                
+                // Number pairs to swop
+                if (grid[i][j] == p1_x) {
+                    grid[i][j] = p1_y;
+                } else if (grid[i][j] == p1_y) {
+                    grid[i][j] = p1_x;
+                }
+                
+                if (grid[i][j] == p2_x) {
+                    grid[i][j] = p2_y;
+                } else if (grid[i][j] == p2_y) {
+                    grid[i][j] = p2_x;
+                }
+                                
+            }
+        }
+        
+        // Return grid efter passing through validator and number remover
+        return this.numberRemover.removeNumbers(this.validator.validateSudoku(this.grid), numbersTobeRemoved);
     }
     
-    void fillTemp(int startIndex) {
+    public void fillTemp(int startIndex) {
         
         // Select where array starts from
         int x = startIndex;

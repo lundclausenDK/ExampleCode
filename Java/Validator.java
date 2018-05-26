@@ -1,15 +1,17 @@
-package validate;
+package implementations;
 
+import interfaces.ValidatorInterface;
 import java.util.Arrays;
 
-public class Validator {
+public class Validator implements ValidatorInterface {
 
     private boolean isValid = true;
     private int[] coreNumbers = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     private int[] tempNumbers = new int[9];
     private int count = 0;
 
-    public boolean validateSudoku(int[][] array) {
+    @Override
+    public int[][] validateSudoku(int[][] array) {
 
         // Check each horisontal row
         for (int i = 0; i < array.length; i++) {
@@ -82,14 +84,23 @@ public class Validator {
         subGridBoxCheck(array, 6, 3);
         subGridBoxCheck(array, 6, 6);
 
-        continueCheck("All vertical columns: ");
+        continueCheck("All subgrid boxes: ");
         
         
         // Return boolean
-        return this.isValid;
+        //return this.isValid;
+        
+        // If Sudoku is a valid one, return this. Else return an empty array
+        if (this.isValid == true) {
+            return array;
+        } else {
+            int[][] empty = new int[9][9];
+            
+            return empty;
+        }
     }
 
-    void continueCheck(String message) {
+    public void continueCheck(String message) {
         if (this.isValid == false) {
             System.out.println(message + this.isValid);
             System.exit(0);
@@ -98,7 +109,7 @@ public class Validator {
         }
     }
 
-    void subGridBoxCheck(int[][] array, int x, int y) {
+    public void subGridBoxCheck(int[][] array, int x, int y) {
 
         this.tempNumbers[0] = array[x][y];
         this.tempNumbers[1] = array[x][y + 1];
