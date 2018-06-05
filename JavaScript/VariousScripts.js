@@ -281,7 +281,7 @@ setTimeout(function() {
 }, 1000);
 
 
-// FetchPerson
+// FetchPerson - ASYNC AWAIT
 const fetch = require('node-fetch');
 
 const URL = "https://swapi.co/api/people/";
@@ -363,4 +363,157 @@ class Book implements iBook2 {
 }
 
 
+// CLOSURES
+function sayHello(name) {
+  var text = 'Hello ' + name;
+  var say = function() { console.log(text); }
+  say();
+}
+sayHello('Joe');
 
+function sayHello2(name) {
+  var text = 'Hello ' + name; // Local variable
+  var say = function() { console.log(text); }
+  return say;
+}
+var say2 = sayHello2('Bob');
+say2(); // logs "Hello Bob"
+
+function say667() {
+  // Local variable that ends up within closure
+  var num = 42;
+  var say = function() { console.log(num); }
+  num++;
+  return say;
+}
+var sayNumber = say667();
+sayNumber(); // logs 43
+
+
+// HOISTING
+function hoist() {
+  a = 20;
+  var b = 100;
+}
+hoist();
+console.log(a); 
+/* 
+Accessible as a global variable outside hoist() function
+Output: 20
+*/
+console.log(b);
+/*
+Output: ReferenceError: b is not defined
+*/
+
+var hoist;
+console.log(hoist); // Output: undefined
+hoist = 'The variable has been hoisted.';
+
+
+function hoist() {
+  console.log(message);
+  var message='Hoisting is all the rage!'
+}
+hoist();
+
+
+// Immediately-Invoked Function Expressions (IIFE)
+// Variation 1
+(function() {
+    alert("I am an IIFE!");
+}());
+
+// Variation 2
+(function() {
+    alert("I am an IIFE, too!");
+})();
+
+
+// INHERITANCE
+var inheritsFrom = function (child, parent) {
+    child.prototype = Object.create(parent.prototype);
+};
+
+var ClassB = function() {
+    this.name = "class B";
+    this.surname = "I'm the child";
+}
+
+inheritsFrom(ClassB, ClassA);
+
+var b = new ClassB();
+b.print();
+
+/* Output: class B */
+
+
+// CALLBACK HELL
+fs.readdir(source, function (err, files) {
+  if (err) {
+    console.log('Error finding files: ' + err)
+  } else {
+    files.forEach(function (filename, fileIndex) {
+      console.log(filename)
+      gm(source + filename).size(function (err, values) {
+        if (err) {
+          console.log('Error identifying file size: ' + err)
+        } else {
+          console.log(filename + ' : ' + values)
+          aspect = (values.width / values.height)
+          widths.forEach(function (width, widthIndex) {
+            height = Math.round(width / aspect)
+            console.log('resizing ' + filename + 'to ' + height + 'x' + height)
+            this.resize(width, height).write(dest + 'w' + width + '_' + filename, function(err) {
+              if (err) console.log('Error writing file: ' + err)
+            })
+          }.bind(this))
+        }
+      })
+    })
+  }
+});
+
+router.post('/:id/title-image', (req, res, next) => {
+    lwip.open(req.file.buffer, 'jpg', (err, image) => {
+        if (err) { next(err); return; }
+        let ratio = (image.width() > 960 ? (960 / image.width()) : 1);
+        image.scale(ratio, (err, image) => {
+            if (err) { next(err); return; }
+            image.crop(image.width(), Math.min((image.width() / 2), image.height()), (err, image) => {
+                if (err) { next(err); return; }
+                image.toBuffer('jpg', { quality: 80 }, (err, buffer) => {
+                    if (err) { next(err); return; }
+                    db.doc.attachment.write(req.params['id'], "TITLE_IMAGE", buffer, "image/jpeg", (err) => {
+                        if (err) { next(err); return; }
+                        res.sendStatus(200);
+                    });
+                });
+            });
+        });
+    });
+});
+
+
+// MOCHA CHAI
+describe('axe', function () {
+	'use strict';
+
+	it('should report that good HTML is good', function (done) {
+		var n = document.getElementById('working');
+		axe.run(n, function (err, result) {
+			expect(err).to.be.null();
+			expect(result.violations.length).to.equal(0);
+			done();
+		});
+	});
+
+	it('should report that bad HTML is bad', function (done) {
+		var n = document.getElementById('broken');
+		axe.run(n, function (err, result) {
+			expect(err).to.be.null();
+			expect(result.violations.length).to.equal(1);
+			done();
+		});
+	});
+});
